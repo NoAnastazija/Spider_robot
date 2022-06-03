@@ -4,99 +4,82 @@ from adafruit_servokit import ServoKit
 MIN_IMP = 500
 MAX_IMP = 2400
 
-NUMER_OF_LEGS = 4
+NUMER_OF_SERVOS = 16
 
-# Initial and final positions of joints
-SHOULDER_INIT = [90, 90, 90, 90]
-SHOULDER_FINAL = [90, 90, 90, 90]
-ARM_INIT = [90, 90, 90, 90]
-ARM_FINAL = [90, 90, 90, 90]
-HAND_INIT = [90, 90, 90, 90]
-HAND_FINAL = [90, 90, 90, 90]
+# Angle mappings of each servo
+#           0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
+SERVO_K = [ 1, -1,  1,  1, -1,  1,  1, -1,  1,  1,  1, -1, -1, -1,  1,  1]
+SERVO_N = [90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90]
 
-# Servomotor to port mapping
-SHOULDER_SERVO = [0, 4, 8, 12]
-ARM_SERVO = [1, 5, 9, 13]
-HAND_SERVO = [2, 6, 10, 14]
+# Current and desired positions of each servo
+servo_at = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+servo_to = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+#servo_spd = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-# Current position of a joint
-shoulder = SHOULDER_INIT.copy()
-arm = ARM_INIT.copy()
-hand = HAND_INIT.copy()
+# Leg to servo mapping
+FR_SHOULDER = 0
+FL_SHOULDER = 4
+RR_SHOULDER = 8
+RL_SHOULDER = 12
+FR_ARM = 1
+FL_ARM = 5
+RR_ARM = 9
+RL_ARM = 13
+FR_HAND = 3
+FL_HAND = 7
+RR_HAND = 11
+RL_HAND = 15
 
-# Desired position of a joint
-shoulder_to = SHOULDER_INIT.copy()
-arm_to = ARM_INIT.copy()
-hand_to = HAND_INIT.copy()
+pca = ServoKit(channels=NUMER_OF_SERVOS)
 
-pca = ServoKit(channels=16)
+def set_servo(i, angle):
+    pca.servo[i].angle = SERVO_K[i]*angle + SERVO_N[i]
+    servo_at[i] = angle
 
-def set_shoulder(leg, angle):
-    pca.servo[SHOULDER_SERVO[leg]].angle = angle
-    shoulder[leg] = angle
-    
-def set_arm(leg, angle):
-    pca.servo[ARM_SERVO[leg]].angle = angle
-    arm[leg] = angle
-
-def set_hand(leg, angle):
-    pca.servo[HAND_SERVO[leg]].angle = angle
-    hand[leg] = angle
-
-def move_legs():
+def move_servos():
     moved = False
-    for leg in range(NUMER_OF_LEGS):
-        if shoulder[leg] < shoulder_to[leg]:
-            set_shoulder(leg, shoulder[leg] + 1)
+    for i in range(NUMER_OF_SERVOS):
+        #servo_spd[i] = (10*servo_spd[i] + (servo_to[i] - servo_at[i])) / 11
+        if servo_at[i] < servo_to[i]:
+            #set_servo(i, servo_at[i] + max(round(servo_spd[i] / 10), 1))
+            set_servo(i, servo_at[i] + 1)
             moved = True
-        elif shoulder_to[leg] < shoulder[leg]:
-            set_shoulder(leg, shoulder[leg] - 1)
-            moved = True
-        else:
-            pca.servo[SHOULDER_SERVO[leg]].angle = None
-
-        if arm[leg] < arm_to[leg]:
-            set_arm(leg, arm[leg] + 1)
-            moved = True
-        elif arm_to[leg] < arm[leg]:
-            set_arm(leg, arm[leg] - 1)
+        elif servo_at[i] > servo_to[i]:
+            #set_servo(i, servo_at[i] + min(round(servo_spd[i] / 10), -1))
+            set_servo(i, servo_at[i] - 1)
             moved = True
         else:
-            pca.servo[ARM_SERVO[leg]].angle = None
-
-        if hand[leg] < hand_to[leg]:
-            set_hand(leg, hand[leg] + 1)
-            moved = True
-        elif hand_to[leg] < hand[leg]:
-            set_hand(leg, hand[leg] - 1)
-            moved = True
-        else:
-            pca.servo[HAND_SERVO[leg]].angle = None
-
+            pca.servo[i].angle = None
     return moved
 
 def move():
-    while move_legs():
+    while move_servos():
         time.sleep(0.02)
 
 def init():
-    for leg in range(NUMER_OF_LEGS):
-        pca.servo[SHOULDER_SERVO[leg]].set_pulse_width_range(MIN_IMP, MAX_IMP)
-        pca.servo[ARM_SERVO[leg]].set_pulse_width_range(MIN_IMP, MAX_IMP)
-        pca.servo[HAND_SERVO[leg]].set_pulse_width_range(MIN_IMP, MAX_IMP)
-        set_shoulder(leg, SHOULDER_INIT[leg])
-        set_arm(leg, ARM_INIT[leg])
-        set_hand(leg, HAND_INIT[leg])
+    for i in range(NUMER_OF_SERVOS):
+        pca.servo[i].set_pulse_width_range(MIN_IMP, MAX_IMP)
+        set_servo(i, 0)
+        time.sleep(0.2)
 
 def reset():
-    for leg in range(NUMER_OF_LEGS):
-        shoulder_to[leg] = SHOULDER_FINAL[leg]
-        arm_to[leg] = ARM_FINAL[leg]
-        hand_to[leg] = HAND_FINAL[leg]
+    for i in range(NUMER_OF_SERVOS):
+        servo_to[i] = 0
     move()
 
 def main():
-    move()
+    for i in [RR_SHOULDER, RR_ARM, RR_HAND]:
+        servo_to[i] = 30
+        move()
+    time.sleep(1)
+    for i in [RR_SHOULDER, RR_ARM, RR_HAND]:
+        servo_to[i] = -30
+        move()
+    time.sleep(1)
+    for i in [RR_SHOULDER, RR_ARM, RR_HAND]:
+        servo_to[i] = 0
+        move()
+    time.sleep(1)
 
 if __name__ == '__main__':
     init()
