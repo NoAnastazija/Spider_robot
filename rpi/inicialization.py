@@ -8,7 +8,7 @@ from adafruit_servokit import ServoKit #https://circuitpython.readthedocs.io/pro
 
 pca = ServoKit(channels=16)
 
-i = 15
+i = 7
 pca.servo[i].set_pulse_width_range(500, 2400)
 pca.servo[i].angle = 80
 time.sleep(1)
@@ -16,4 +16,4 @@ pca.servo[i].angle = 100
 time.sleep(1)
 pca.servo[i].angle = 90
 time.sleep(1)
-pca.servo[i].angle = None
+#pca.servo[i].angle = None
