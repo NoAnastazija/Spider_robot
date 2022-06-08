@@ -31,20 +31,24 @@
                                                          
 
 */
-#include <Servo.h>    //to define and control servos
 #include <FlexiTimer2.h>//to set a timer to manage all servos
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
+#include <Adafruit_PWMServoDriver.h>
 
 // OLED display TWI address
 #define OLED_ADDR   0x3C
 Adafruit_SSD1306 display(-1);
 /* Servos --------------------------------------------------------------------*/
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+#define SERVOMIN  102 // This is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX  492 // This is the 'maximum' pulse length count (out of 4096)
+#define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 //define 12 servos for 4 legs
-Servo servo[4][3];
 //define servos' ports
-const int servo_pin[4][3] = { {11, 12, 13}, {2, 4, 7}, {14, 15, 16},{8, 9, 10} };/* Size of the robot ---------------------------------------------------------*/
+const int servo_pin[4][3] = {{1, 3, 0}, {9, 11, 8}, {5, 7, 4},{13, 15, 12}};
+/* Size of the robot ---------------------------------------------------------*/
 const float length_a = 50;
 const float length_b = 77.1;
 const float length_c = 27.5;
@@ -95,10 +99,17 @@ String data="";
 void setup() 
 {
   Serial.begin(9600);
-  display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);
+  //initialize servos
+  pwm.begin();
+  pwm.setOscillatorFrequency(27000000);
+  pwm.setPWMFreq(SERVO_FREQ);
+  delay(10);
+
+  
+/*  display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);
   display.clearDisplay();
   display.display();
-  delay(10000);
+  delay(10000); */
   set_site(0, x_default - x_offset, y_start + y_step, z_boot);
   set_site(1, x_default - x_offset, y_start + y_step, z_boot);
   set_site(2, x_default + x_offset, y_start, z_boot);
@@ -111,17 +122,14 @@ void setup()
     }
   }
   //start servo service
-  FlexiTimer2::set(20, servo_service);
+  FlexiTimer2::set(100, servo_service);
   FlexiTimer2::start();
-  //initialize servos
-  servo_attach();
+  sit();
+  delay(4000);
   stand();
-//  delay(3000);
-//  sit();
-//  delay(3000);
-//  stand();
-//  delay(3000);
-  happy();
+  delay(4000);
+ 
+  /*happy();
   delay (random (500, 1000));
   cierra();
   delay (150);
@@ -146,11 +154,12 @@ void setup()
   cierra();
   delay (150);
   happy();
-  delay (random (500, 1000));
+  delay (random (500, 1000));*/
 }
 
 void loop() 
 {
+  /*
   while(Serial.available())                   // While serial data are available we store it 
   {
     delay(10);
@@ -199,29 +208,7 @@ void loop()
   analogWrite(lightR,LedR);
   analogWrite(lightG,LedG);
   analogWrite(lightB,LedB);
-}
-void servo_attach(void)
-{
-  for (int i = 0; i < 4; i++)
-  {
-    for (int j = 0; j < 3; j++)
-    {
-      servo[i][j].attach(servo_pin[i][j]);
-      delay(100);
-    }
-  }
-}
-
-void servo_detach(void)
-{
-  for (int i = 0; i < 4; i++)
-  {
-    for (int j = 0; j < 3; j++)
-    {
-      servo[i][j].detach();
-      delay(100);
-    }
-  }
+  */
 }
 
 void sit(void)
@@ -846,10 +833,15 @@ void polar_to_servo(int leg, float alpha, float beta, float gamma)
     beta = beta;
     gamma += 90;
   }
+ 
+  pwm.setPWM(servo_pin[leg][0], 0, map(constrain(alpha, 10.0, 170.0), 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
+  pwm.setPWM(servo_pin[leg][1], 0, map(constrain(beta, 10.0, 170.0), 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
+  pwm.setPWM(servo_pin[leg][2], 0, map(constrain(gamma, 10.0, 170.0), 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
+}
 
-  servo[leg][0].write(alpha);
-  servo[leg][1].write(beta);
-  servo[leg][2].write(gamma);
+float map(float x, float in_min, float in_max, float out_min, float out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 void abre() {
