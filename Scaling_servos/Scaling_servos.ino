@@ -32,24 +32,25 @@
 
 */
 
-#include <Servo.h>   
+#include <Adafruit_PWMServoDriver.h>
 
-Servo servo[4][3];
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+#define SERVOMIN  150 // This is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX  600 // This is the 'maximum' pulse length count (out of 4096)
+#define USMIN  600 // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
+#define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
+#define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
+
 
 //define servos' ports
-const int servo_pin[4][3] = { {2, 3, 4}, {5, 6, 7}, {8, 9, 10}, {11, 12, 13} };
+const int servo_pin[4][3] = { {0, 1, 3}, {8, 9, 11}, {4, 5, 7}, {12, 13, 15} };
 
 void setup()
 {
-  //initialize all servos
-  for (int i = 0; i < 4; i++)
-  {
-    for (int j = 0; j < 3; j++)
-    {
-      servo[i][j].attach(servo_pin[i][j]);
-      delay(20);
-    }
-  }
+  pwm.begin();
+  pwm.setOscillatorFrequency(27000000);
+  pwm.setPWMFreq(SERVO_FREQ);
+  delay(10);
 }
 
 void loop(void)
@@ -58,7 +59,7 @@ void loop(void)
   {
     for (int j = 0; j < 3; j++)
     {
-      servo[i][j].write(90);
+      pwm.setPWM(servo_pin[i][j], 0, map(90, 0, 180, SERVOMIN, SERVOMAX));
       delay(20);
     }
   }
