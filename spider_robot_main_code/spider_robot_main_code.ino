@@ -64,7 +64,7 @@ volatile float site_now[4][3];    //real-time coordinates of the end of each leg
 volatile float site_expect[4][3]; //expected coordinates of the end of each leg
 float temp_speed[4][3];   //each axis' speed, needs to be recalculated before each movement
 float move_speed;     //movement speed
-float speed_multiple = 1; //movement speed multiple
+float speed_multiple = 0.2; //movement speed multiple
 const float spot_turn_speed = 4;
 const float leg_move_speed = 8;
 const float body_move_speed = 3;
@@ -122,7 +122,7 @@ void setup()
     }
   }
   //start servo service
-  FlexiTimer2::set(100, servo_service);
+  FlexiTimer2::set(20, servo_service);
   FlexiTimer2::start();
   sit();
   delay(4000);
@@ -731,7 +731,7 @@ void servo_service(void)
 
 /*
   - set one of end points' expect site
-  - this founction will set temp_speed[4][3] at same time
+  - this function will set temp_speed[4][3] at same time
   - non - blocking function
    ---------------------------------------------------------------------------*/
 void set_site(int leg, float x, float y, float z)
