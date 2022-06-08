@@ -731,7 +731,7 @@ void servo_service(void)
 
 /*
   - set one of end points' expect site
-  - this founction will set temp_speed[4][3] at same time
+  - this function will set temp_speed[4][3] at same time
   - non - blocking function
    ---------------------------------------------------------------------------*/
 void set_site(int leg, float x, float y, float z)
