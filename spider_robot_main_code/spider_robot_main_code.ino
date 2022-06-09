@@ -64,7 +64,7 @@ volatile float site_now[4][3];    //real-time coordinates of the end of each leg
 volatile float site_expect[4][3]; //expected coordinates of the end of each leg
 float temp_speed[4][3];   //each axis' speed, needs to be recalculated before each movement
 float move_speed;     //movement speed
-float speed_multiple = 0.2; //movement speed multiple
+float speed_multiple = 1.5; //movement speed multiple
 const float spot_turn_speed = 4;
 const float leg_move_speed = 8;
 const float body_move_speed = 3;
@@ -122,13 +122,42 @@ void setup()
     }
   }
   //start servo service
-  FlexiTimer2::set(20, servo_service);
+  FlexiTimer2::set(50, servo_service);
   FlexiTimer2::start();
+ // sit();
+ // delay(4000);
+ 
   sit();
+  delay(10);
+  stand();
+  delay(10);
+  hand_wave(2);
+  delay(10);
+  step_forward(3);
+  delay(10);
+  hand_shake(1);
+  delay(10);
+  step_back(3);
+  
+
+/*
+stand();
+delay(1000);
+body_right(40);
+body_left(80);
+delay(5);
+body_right(80);
+body_left(40);
+stand();
+*/
+
+
+ /* turn_right(4);
+  delay(4000);
+  turn_left(4);
   delay(4000);
   stand();
-  delay(4000);
- 
+  */
   /*happy();
   delay (random (500, 1000));
   cierra();
@@ -834,7 +863,7 @@ void polar_to_servo(int leg, float alpha, float beta, float gamma)
     gamma += 90;
   }
  
-  pwm.setPWM(servo_pin[leg][0], 0, map(constrain(alpha, 10.0, 170.0), 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
+  pwm.setPWM(servo_pin[leg][0], 0, map(alpha, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
   pwm.setPWM(servo_pin[leg][1], 0, map(constrain(beta, 10.0, 170.0), 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
   pwm.setPWM(servo_pin[leg][2], 0, map(constrain(gamma, 10.0, 170.0), 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
 }
