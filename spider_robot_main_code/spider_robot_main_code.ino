@@ -74,7 +74,9 @@ void setup()
   FlexiTimer2::start();
  // sit();
  // delay(4000);
- 
+
+// body_dance2(2);
+
   sit();
   delay(10);
   stand();
@@ -97,10 +99,10 @@ delay(5);
 body_right(80);
 body_left(40);
 stand();
+
 */
-
-
- /* turn_right(4);
+/*
+  turn_right(4);
   delay(4000);
   turn_left(4);
   delay(4000);
@@ -584,48 +586,47 @@ void head_down(int i)
   wait_all_reach();
 }
 
-//void body_dance(int i)
-//{
-//  float x_tmp;
-//  float y_tmp;
-//  float z_tmp;
-//  float body_dance_speed = 2;
-//  sit();
-//  move_speed = 1;
-//  set_site(0, x_default, y_default, KEEP);
-//  set_site(1, x_default, y_default, KEEP);
-//  set_site(2, x_default, y_default, KEEP);
-//  set_site(3, x_default, y_default, KEEP);
-//  wait_all_reach();
-//  //stand();
-//  set_site(0, x_default, y_default, z_default - 20);
-//  set_site(1, x_default, y_default, z_default - 20);
-//  set_site(2, x_default, y_default, z_default - 20);
-//  set_site(3, x_default, y_default, z_default - 20);
-//  wait_all_reach();
-//  move_speed = body_dance_speed;
-//  head_up(30);
-//  for (int j = 0; j < i; j++)
-//  {
-//    if (j > i / 4)
-//      move_speed = body_dance_speed * 2;
-//    if (j > i / 2)
-//      move_speed = body_dance_speed * 3;
-//    set_site(0, KEEP, y_default - 20, KEEP);
-//    set_site(1, KEEP, y_default + 20, KEEP);
-//    set_site(2, KEEP, y_default - 20, KEEP);
-//    set_site(3, KEEP, y_default + 20, KEEP);
-//    wait_all_reach();
-//    set_site(0, KEEP, y_default + 20, KEEP);
-//    set_site(1, KEEP, y_default - 20, KEEP);
-//    set_site(2, KEEP, y_default + 20, KEEP);
-//    set_site(3, KEEP, y_default - 20, KEEP);
-//    wait_all_reach();
-//  }
-//  move_speed = body_dance_speed;
-//  head_down(30);
-//}
-
+void body_dance(int i)
+{
+  float x_tmp;
+  float y_tmp;
+  float z_tmp;
+  float body_dance_speed = 2;
+  sit();
+  move_speed = 1;
+  set_site(0, x_default, y_default, KEEP);
+  set_site(1, x_default, y_default, KEEP);
+  set_site(2, x_default, y_default, KEEP);
+  set_site(3, x_default, y_default, KEEP);
+  wait_all_reach();
+  stand();
+  set_site(0, x_default, y_default, z_default - 20);
+  set_site(1, x_default, y_default, z_default - 20);
+  set_site(2, x_default, y_default, z_default - 20);
+  set_site(3, x_default, y_default, z_default - 20);
+  wait_all_reach();
+  move_speed = body_dance_speed;
+  head_up(30);
+  for (int j = 0; j < i; j++)
+  {
+    if (j > i / 4)
+      move_speed = body_dance_speed * 2;
+    if (j > i / 2)
+      move_speed = body_dance_speed * 3;
+    set_site(0, KEEP, y_default - 20, KEEP);
+    set_site(1, KEEP, y_default + 20, KEEP);
+    set_site(2, KEEP, y_default - 20, KEEP);
+    set_site(3, KEEP, y_default + 20, KEEP);
+    wait_all_reach();
+    set_site(0, KEEP, y_default + 20, KEEP);
+    set_site(1, KEEP, y_default - 20, KEEP);
+    set_site(2, KEEP, y_default + 20, KEEP);
+    set_site(3, KEEP, y_default - 20, KEEP);
+    wait_all_reach();
+  }
+  move_speed = body_dance_speed;
+  head_down(30);
+}
 
 /*
   - microservos service /timer interrupt function/50Hz
@@ -761,8 +762,8 @@ void polar_to_servo(int leg, float alpha, float beta, float gamma)
   }
  
   pwm.setPWM(servo_pin[leg][0], 0, map(alpha, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
-  pwm.setPWM(servo_pin[leg][1], 0, map(constrain(beta, 10.0, 170.0), 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
-  pwm.setPWM(servo_pin[leg][2], 0, map(constrain(gamma, 10.0, 170.0), 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
+  pwm.setPWM(servo_pin[leg][1], 0, map(beta, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
+  pwm.setPWM(servo_pin[leg][2], 0, map(gamma, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
 }
 
 float map(float x, float in_min, float in_max, float out_min, float out_max)
