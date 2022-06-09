@@ -1,45 +1,6 @@
-/************************************************************************************************************************************************************************                                              
- * - Author               : BELKHIR Mohamed                        *                                               
- * - Profession           : (Electrical Ingineer) MEGA DAS owner   *                                                                                              
- * - Main purpose         : Industrial Application                 *                                                                                 
- * - Copyright (c) holder : All rights reserved                    *
- * - License              : BSD 2-Clause License                   * 
- * - Date                 : 20/04/2017                             *
- * ***********************************************************************************************************************************************************************/
- 
- /*********************************** NOTE **************************************/
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-
-// * Redistributions of source code must retain the above copyright notice, this
-//  list of conditions and the following disclaimer.
-
-// * Redistributions in binary form must reproduce the above copyright notice,
-//  this list of conditions and the following disclaimer in the documentation
-//  and/or other materials provided with the distribution.
-
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED
-
-/*
-
-                                                         
-                                                         
-                                                         
-                                                         
-                                                         
-
-*/
 #include <FlexiTimer2.h>//to set a timer to manage all servos
 #include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#include <Adafruit_GFX.h>
 #include <Adafruit_PWMServoDriver.h>
-
-// OLED display TWI address
-#define OLED_ADDR   0x3C
-Adafruit_SSD1306 display(-1);
 /* Servos --------------------------------------------------------------------*/
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define SERVOMIN  102 // This is the 'minimum' pulse length count (out of 4096)
@@ -86,14 +47,6 @@ const float turn_y1 = y_start + y_step / 2;
 const float turn_x0 = turn_x1 - temp_b * cos(temp_alpha);
 const float turn_y0 = temp_b * sin(temp_alpha) - turn_y1 - length_side;
 
-const int lightR=3;
-const int lightG=5;
-const int lightB=6;
-
-int LedR=0;
-int LedG=0;
-int LedB=0;
-
 char SerialData;                                    // Use this variable to read each caractere received through serial port
 String data="";
 void setup() 
@@ -105,11 +58,6 @@ void setup()
   pwm.setPWMFreq(SERVO_FREQ);
   delay(10);
 
-  
-/*  display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR);
-  display.clearDisplay();
-  display.display();
-  delay(10000); */
   set_site(0, x_default - x_offset, y_start + y_step, z_boot);
   set_site(1, x_default - x_offset, y_start + y_step, z_boot);
   set_site(2, x_default + x_offset, y_start, z_boot);
@@ -158,32 +106,6 @@ stand();
   delay(4000);
   stand();
   */
-  /*happy();
-  delay (random (500, 1000));
-  cierra();
-  delay (150);
-  enfado();
-  delay (random (1000, 3000));
-  cierra();
-  delay (150);
-  entorna();
-  delay (random (1000, 3000));
-  cierra();
-  delay (150);
-  enfado1();
-  delay (random (1000, 3000));
-  cierra();
-  delay (150);
-  triste();
-  delay (random (1000, 3000));
-  cierra();
-  delay (150);
-  abre();
-  delay (random (500, 3000));
-  cierra();
-  delay (150);
-  happy();
-  delay (random (500, 1000));*/
 }
 
 void loop() 
@@ -193,50 +115,24 @@ void loop()
   {
     delay(10);
     SerialData=Serial.read();
-    if(SerialData=='b')
-    LedR=Serial.parseInt();
-    else if(SerialData=='g')
-    LedG=Serial.parseInt();
-    else if(SerialData=='r')
-    LedB=Serial.parseInt();
+    if(SerialData=='b' || SerialData=='g' || SerialData=='r')
+      Serial.parseInt();
     else
-    data+=SerialData;
+      data+=SerialData;
   }
   if(data=="f")                                  // If the stored data is forward movement
-  {
-    cierra();
-    delay (150);
-    happy();
     step_forward(1);
-  }
 
   if(data=="p")                                  // If the stored data is backward movement
-  {
-    cierra();
-    delay (150);
-    triste();
     step_back(1);
-  }
 
   if(data=="l")                                  // If the stored data is to turn left the car 
-  {
-    cierra();
-    delay (150);
-    enfado1();
     turn_left(1);
-  }
-
+  
   if(data=="m")                                  // If the stored data is to turn right the car
-  {
-    cierra();
-    delay (150);
-    enfado();
     turn_right(5);
-  }
+  
   data="";
-  analogWrite(lightR,LedR);
-  analogWrite(lightG,LedG);
-  analogWrite(lightB,LedB);
   */
 }
 
@@ -557,8 +453,6 @@ void step_back(unsigned int step)
   }
 }
 
-// add by RegisHsu
-
 void body_left(int i)
 {
   set_site(0, site_now[0][0] + i, KEEP, KEEP);
@@ -871,61 +765,4 @@ void polar_to_servo(int leg, float alpha, float beta, float gamma)
 float map(float x, float in_min, float in_max, float out_min, float out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
-void abre() {
-  display.clearDisplay();
-  display.fillCircle (50, 15, 12, WHITE); //ojo izquierdo grande
-  display.fillCircle (82, 20, 7, WHITE); //ojo derecho pequeo
-  display.display();
-}
-
-void cierra() {
-  display.clearDisplay();
-  display.drawFastHLine(40, 15, 20, WHITE);
-  display.drawFastHLine(72, 20, 15, WHITE);
-  display.display();
-}
-
-
-void entorna() {
-  display.clearDisplay();
-  display.fillCircle (42, 10, 20, WHITE); //ojo izquierdo grande
-  display.fillCircle (82, 10, 15, WHITE); //ojo derecho pequeo
-  display.fillRect (0, 0, 128, 15, BLACK); //ceja superior
-  display.fillRect (0, 40, 128, 15, BLACK); //ceja inferior
-  display.display();
-}
-
-void triste() {
-  display.clearDisplay();
-  display.fillCircle (42, 10, 17, WHITE); //ojo izquierdo grande
-  display.fillCircle (82, 10, 17, WHITE); //ojo derecho pequeo
-  display.fillTriangle (0, 0, 0, 35, 78, 0, BLACK); //ceja superior
-  display.fillTriangle (50, 0, 128, 35, 128, 0, BLACK); //ceja superior
-  display.display();
-}
-
-void happy() {
-  display.clearDisplay();
-  display.fillCircle (42, 25, 15, WHITE); //ojo izquierdo grande
-  display.fillCircle (82, 25, 15, WHITE); //ojo derecho pequeo
-  display.fillCircle (42, 33, 20, BLACK); //ojo izquierdo grande
-  display.fillCircle (82, 33, 20, BLACK); //ojo derecho pequeo
-  display.display();
-}
-
-void enfado() {
-  display.clearDisplay();
-  display.fillCircle (42, 10, 18, WHITE); //ojo izquierdo grande
-  display.fillCircle (82, 10, 12, WHITE); //ojo derecho pequeo
-  display.fillTriangle (0, 0, 54, 26, 118, 0, BLACK); //ceja superior
-  display.display();
-}
-void enfado1() {
-  display.clearDisplay();
-  display.fillCircle (42, 10, 18, WHITE); //ojo izquierdo grande
-  display.fillCircle (82, 10, 12, WHITE); //ojo derecho pequeo
-  display.fillTriangle (0, 0, 65, 15, 120, 0, BLACK); //ceja superior
-  display.display();
 }
