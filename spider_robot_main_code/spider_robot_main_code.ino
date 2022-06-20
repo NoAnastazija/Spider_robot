@@ -47,10 +47,10 @@ const float turn_y1 = y_start + y_step / 2;
 const float turn_x0 = turn_x1 - temp_b * cos(temp_alpha);
 const float turn_y0 = temp_b * sin(temp_alpha) - turn_y1 - length_side;
 
-char SerialData;                                    // Use this variable to read each caractere received through serial port
-void setup() 
+void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(9600, SERIAL_8N1);
+
   //initialize servos
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -87,7 +87,7 @@ void setup()
   hand_shake(1);
   delay(10);
   step_back(3);
-  
+
 */
 /*
 stand();
@@ -109,24 +109,27 @@ stand();
   */
 }
 
-void loop() 
+void loop()
 {
-  
-  while(Serial.available())                   // While serial data are available we store it 
+  while(Serial.available())
   {
-    delay(10);
-    SerialData = Serial.read();
-    if(SerialData=='f')                                  // If the stored data is forward movement
-      step_forward(2);
-  
-    if(SerialData=='p')                                  // If the stored data is backward movement
-      step_back(2);
-  
-    if(SerialData=='l')                                  // If the stored data is to turn left the car 
-      turn_left(1);
-    
-    if(SerialData=='m')                                  // If the stored data is to turn right the car
-      turn_right(1);
+    switch (Serial.read()) {
+      case 'f':
+        step_forward(2);
+        break;
+
+      case 'p':
+        step_back(2);
+        break;
+
+      case 'l':
+        turn_left(1);
+        break;
+
+      case 'm'
+        turn_right(1);
+        break;
+    }
   }
 }
 
@@ -752,13 +755,13 @@ void polar_to_servo(int leg, float alpha, float beta, float gamma)
     beta = beta;
     gamma += 90;
   }
- 
-  pwm.setPWM(servo_pin[leg][0], 0, map(alpha, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
-  pwm.setPWM(servo_pin[leg][1], 0, map(beta, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
-  pwm.setPWM(servo_pin[leg][2], 0, map(gamma, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
+
+  pwm.setPWM(servo_pin[leg][0], 0, angle_to_pwm(alpha));
+  pwm.setPWM(servo_pin[leg][1], 0, angle_to_pwm(beta));
+  pwm.setPWM(servo_pin[leg][2], 0, angle_to_pwm(gamma));
 }
 
-float map(float x, float in_min, float in_max, float out_min, float out_max)
+int angle_to_pwm(float angle)
 {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  return (int)(angle * (float)(SERVOMAX - SERVOMIN) / 180.0 + SERVOMIN);
 }
