@@ -47,7 +47,7 @@ const float turn_y1 = y_start + y_step / 2;
 const float turn_x0 = turn_x1 - temp_b * cos(temp_alpha);
 const float turn_y0 = temp_b * sin(temp_alpha) - turn_y1 - length_side;
 
-void setup() 
+void setup()
 {
   Serial.begin(9600, SERIAL_8N1);
 
@@ -87,7 +87,7 @@ void setup()
   hand_shake(1);
   delay(10);
   step_back(3);
-  
+
 */
 /*
 stand();
@@ -109,7 +109,7 @@ stand();
   */
 }
 
-void loop() 
+void loop()
 {
   while(Serial.available())
   {
@@ -755,7 +755,7 @@ void polar_to_servo(int leg, float alpha, float beta, float gamma)
     beta = beta;
     gamma += 90;
   }
- 
+
   pwm.setPWM(servo_pin[leg][0], 0, angle_to_pwm(alpha));
   pwm.setPWM(servo_pin[leg][1], 0, angle_to_pwm(beta));
   pwm.setPWM(servo_pin[leg][2], 0, angle_to_pwm(gamma));
