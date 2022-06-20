@@ -47,7 +47,6 @@ const float turn_y1 = y_start + y_step / 2;
 const float turn_x0 = turn_x1 - temp_b * cos(temp_alpha);
 const float turn_y0 = temp_b * sin(temp_alpha) - turn_y1 - length_side;
 
-char SerialData;                                    // Use this variable to read each caractere received through serial port
 void setup() 
 {
   Serial.begin(9600);
@@ -111,22 +110,26 @@ stand();
 
 void loop() 
 {
-  
-  while(Serial.available())                   // While serial data are available we store it 
+  while(Serial.available()) // While serial data are available we store it
   {
     delay(10);
-    SerialData = Serial.read();
-    if(SerialData=='f')                                  // If the stored data is forward movement
-      step_forward(2);
-  
-    if(SerialData=='p')                                  // If the stored data is backward movement
-      step_back(2);
-  
-    if(SerialData=='l')                                  // If the stored data is to turn left the car 
-      turn_left(1);
-    
-    if(SerialData=='m')                                  // If the stored data is to turn right the car
-      turn_right(1);
+    switch (Serial.read()) {
+      case 'f':
+        step_forward(2);
+        break;
+
+      case 'p':
+        step_back(2);
+        break;
+
+      case 'l':
+        turn_left(1);
+        break;
+
+      case 'm'
+        turn_right(1);
+        break;
+    }
   }
 }
 
