@@ -753,12 +753,12 @@ void polar_to_servo(int leg, float alpha, float beta, float gamma)
     gamma += 90;
   }
  
-  pwm.setPWM(servo_pin[leg][0], 0, map(alpha, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
-  pwm.setPWM(servo_pin[leg][1], 0, map(beta, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
-  pwm.setPWM(servo_pin[leg][2], 0, map(gamma, 0.0, 180.0, (float)SERVOMIN, (float)SERVOMAX));
+  pwm.setPWM(servo_pin[leg][0], 0, angle_to_pwm(alpha));
+  pwm.setPWM(servo_pin[leg][1], 0, angle_to_pwm(beta));
+  pwm.setPWM(servo_pin[leg][2], 0, angle_to_pwm(gamma));
 }
 
-float map(float x, float in_min, float in_max, float out_min, float out_max)
+int angle_to_pwm(float angle)
 {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  return (int)(angle * (float)(SERVOMAX - SERVOMIN) / 180.0 + SERVOMIN);
 }
