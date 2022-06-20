@@ -113,7 +113,6 @@ void loop()
 {
   while(Serial.available())
   {
-    delay(10);
     switch (Serial.read()) {
       case 'f':
         step_forward(2);
