@@ -126,7 +126,7 @@ void loop()
         turn_left(1);
         break;
 
-      case 'm'
+      case 'm':
         turn_right(1);
         break;
     }
