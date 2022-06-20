@@ -49,7 +49,8 @@ const float turn_y0 = temp_b * sin(temp_alpha) - turn_y1 - length_side;
 
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(9600, SERIAL_8N1);
+
   //initialize servos
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -110,7 +111,7 @@ stand();
 
 void loop() 
 {
-  while(Serial.available()) // While serial data are available we store it
+  while(Serial.available())
   {
     delay(10);
     switch (Serial.read()) {
