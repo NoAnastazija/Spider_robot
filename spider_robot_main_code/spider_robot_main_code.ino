@@ -30,7 +30,6 @@ const float spot_turn_speed = 4;
 const float leg_move_speed = 8;
 const float body_move_speed = 3;
 const float stand_seat_speed = 1;
-volatile int rest_counter;      //+1/0.02s, for automatic rest
 //functions' parameter
 const float KEEP = 255;
 //define PI for calculation
@@ -647,8 +646,6 @@ void servo_service(void)
     cartesian_to_polar(alpha, beta, gamma, site_now[i][0], site_now[i][1], site_now[i][2]);
     polar_to_servo(i, alpha, beta, gamma);
   }
-
-  rest_counter++;
 }
 
 /*
