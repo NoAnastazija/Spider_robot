@@ -41,7 +41,9 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 
 //define servos' ports
-const int servo_pin[4][3] = {{1, 3, 0}, {9, 11, 8}, {5, 7, 4},{13, 15, 12}};
+//                            Leg 0 (FR)    Leg 1 (RR)    Leg 2 (FL)    Leg 3 (RL)
+//                             F   C   T     F   C   T     F   C   T     F   C   T
+const int servo_pin[4][3] = {{ 1,  3,  0}, { 9, 11,  8}, { 5,  7,  4}, {13, 15, 12}};
 
 void setup()
 {
