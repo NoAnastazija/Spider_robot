@@ -8,7 +8,9 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 //define 12 servos for 4 legs
 //define servos' ports
-const int servo_pin[4][3] = {{1, 3, 0}, {9, 11, 8}, {5, 7, 4},{13, 15, 12}};
+//                            Leg 0 (FR)    Leg 1 (RR)    Leg 2 (FL)    Leg 3 (RL)
+//                             F   C   T     F   C   T     F   C   T     F   C   T
+const int servo_pin[4][3] = {{ 1,  3,  0}, { 9, 11,  8}, { 5,  7,  4}, {13, 15, 12}};
 /* Size of the robot ---------------------------------------------------------*/
 const float length_a = 50;
 const float length_b = 77.1;
