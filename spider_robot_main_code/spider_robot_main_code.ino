@@ -117,16 +117,16 @@ void loop()
         step_forward(2);
         break;
 
-      case 'p':
+      case 'b':
         step_back(2);
         break;
 
       case 'l':
-        turn_left(1);
+        turn_left(2);
         break;
 
-      case 'm':
-        turn_right(1);
+      case 'r':
+        turn_right(2);
         break;
     }
   }
